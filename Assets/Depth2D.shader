@@ -51,7 +51,10 @@
 			
 			float4 rotate(float4 vec, float3 angle)
 			{
-				float angleX = angle.x;
+ 				float angleX = angle.y;
+				float angleY = angle.x;
+				float angleZ = angle.z;
+
 				float c = cos(angleX);
 				float s = sin(angleX);
 				float4x4 rotateXMatrix = float4x4(1, 0, 0, 0,
@@ -59,7 +62,6 @@
 					0, s, c, 0,
 					0, 0, 0, 1);
 
-				float angleY = 0;
 				c = cos(angleY);
 				s = sin(angleY);
 				float4x4 rotateYMatrix = float4x4(c, 0, s, 0,
@@ -67,7 +69,6 @@
 					-s, 0, c, 0,
 					0, 0, 0, 1);
 
-				float angleZ = 0;
 				c = cos(angleZ);
 				s = sin(angleZ);
 				float4x4 rotateZMatrix = float4x4(c, -s, 0, 0,
