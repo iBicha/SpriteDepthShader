@@ -8,6 +8,7 @@
 	SubShader
 	{
 		Tags { "RenderType"="Opaque" }
+		Cull Off
 		LOD 100
 
 		Pass
@@ -37,6 +38,8 @@
 			float4 _MainTex_ST;
 			float4 _DepthTex_ST;
 
+			float scale = 0.5;
+
 			v2f vert (appdata v)
 			{
 				v2f o;
@@ -46,7 +49,7 @@
 				return o;
 			}
 			
-			float rotate(float4 vec, float3 angle)
+			float4 rotate(float4 vec, float3 angle)
 			{
 				float angleX = angle.x;
 				float c = cos(angleX);
@@ -56,7 +59,7 @@
 					0, s, c, 0,
 					0, 0, 0, 1);
 
-				float angleY = angle.y;
+				float angleY = 0;
 				c = cos(angleY);
 				s = sin(angleY);
 				float4x4 rotateYMatrix = float4x4(c, 0, s, 0,
@@ -64,7 +67,7 @@
 					-s, 0, c, 0,
 					0, 0, 0, 1);
 
-				float angleZ = angle.y;
+				float angleZ = 0;
 				c = cos(angleZ);
 				s = sin(angleZ);
 				float4x4 rotateZMatrix = float4x4(c, -s, 0, 0,
@@ -72,32 +75,31 @@
 					0, 0, 1, 0,
 					0, 0, 0, 1);
 
-				float4 translatedRotX = mul(vec, rotateXMatrix);
-				float4 translatedRotXY = mul(translatedRotX, rotateYMatrix);
-				float4 translatedRotXYZ = mul(translatedRotXY, rotateZMatrix);
-				return translatedRotXYZ;
+				vec = mul(vec, rotateXMatrix);
+				vec = mul(vec, rotateYMatrix);
+				vec = mul(vec, rotateZMatrix);
+				return vec;
 			}
 
 			fixed4 frag (v2f i) : SV_Target
 			{
-				fixed4 col1 = tex2D(_MainTex, i.uv);
-
+				fixed4 depth = tex2D(_DepthTex, i.uv);
 				float4 pos;
-				pos.x = i.uv.x - 0.5;
-				pos.y = i.uv.y - 0.5;
-				pos.z = tex2D(_DepthTex, i.uv).r - 0.5;
+				pos.x = i.uv.x;
+				pos.y = i.uv.y;
+				pos.z = depth.r;
 				pos.w = 1;
+
+				pos.xyz -= 0.5;
+
 				//rotate
 				pos = rotate(pos, i.viewDir);
-				pos.x += 0.5;
-				pos.y += 0.5;
-				pos.z += 0.5;
+				
+				pos.xyz += 0.5;
 
-				float2 uv2 = pos.xy;
 				// sample the texture
-				fixed4 col2 = tex2D(_MainTex, uv2);
-				col2.a = col1.a;
-				return col2;
+				fixed4 col = tex2D(_MainTex, pos.xy) ;
+				return col;
 			}
 
 			ENDCG
