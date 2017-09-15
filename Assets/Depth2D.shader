@@ -9,6 +9,7 @@
 		_rZ("RotateZ", float) = 0
 		_Animate("Animate Angle", float) = 0
 		_Speed("Animate Speed", float) = 0
+		_zCenter("Depth Center", Range (0,1)) = 0.5
 }
 	SubShader
 	{
@@ -50,7 +51,7 @@
 			float4 _DepthTex_ST;
 			float _rX,_rY,_rZ;
 			float _rX2,_rY2,_rZ2;
-			float _Animate, _Speed;
+			float _Animate, _Speed, _zCenter;
 
 			v2f vert (appdata v)
 			{
@@ -113,9 +114,9 @@
 				pos.z = Luminance(depth.rgb);
 				pos.w = 1;
 
-				pos.xyz -= 0.5;
+				pos.xyz -= _zCenter;
 				pos = rotate(pos);
-				pos.xyz += 0.5;
+				pos.xyz += _zCenter;
 
 			    depth = tex2D(_DepthTex, pos.xy);
 
@@ -124,9 +125,9 @@
 				pos.z = Luminance(depth.rgb);
 				pos.w = 1;
 
-				pos.xyz -= 0.5;
+				pos.xyz -= _zCenter;
 				pos = rotate(pos);
-				pos.xyz += 0.5;
+				pos.xyz += _zCenter;
 
 				// sample the texture
 				fixed4 col = tex2D(_MainTex, pos.xy) ;
