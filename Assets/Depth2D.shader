@@ -4,12 +4,21 @@
 	{
 		_MainTex("Texture", 2D) = "white" {}
 		_DepthTex("Depth", 2D) = "white" {}
-	}
+		_rX("RotateX", float) = 0
+		_rY("RotateY", float) = 0
+		_rZ("RotateZ", float) = 0
+		_Animate("Animate Angle", float) = 0
+		_Speed("Animate Speed", float) = 0
+}
 	SubShader
 	{
-		Tags { "RenderType"="Opaque" }
-		Cull Off
-		LOD 100
+	    //Tags {"Queue"="Transparent" "IgnoreProjector"="True" "RenderType"="Transparent"}
+	    Tags {"RenderType"="Opaque"}
+     	LOD 100
+     
+     	//ZWrite Off
+     	//Blend SrcAlpha OneMinusSrcAlpha 
+     	Cull Off
 
 		Pass
 		{
@@ -29,6 +38,7 @@
 			struct v2f
 			{
 				float2 uv : TEXCOORD0;
+				float2 uv2 : TEXCOORD1;
 				float4 vertex : SV_POSITION;
 				float3 viewDir : NORMAL;
 			};
@@ -37,23 +47,26 @@
 			sampler2D _DepthTex;
 			float4 _MainTex_ST;
 			float4 _DepthTex_ST;
-
-			float scale = 0.5;
+			float _rX,_rY,_rZ;
+			float _rX2,_rY2,_rZ2;
+			float _Animate, _Speed;
 
 			v2f vert (appdata v)
 			{
+
 				v2f o;
 				o.vertex = UnityObjectToClipPos(v.vertex);
 				o.uv = TRANSFORM_TEX(v.uv, _MainTex);
+				o.uv2 = TRANSFORM_TEX(v.uv, _DepthTex);
 				o.viewDir = UNITY_MATRIX_IT_MV[2].xyz;
 				return o;
 			}
 			
 			float4 rotate(float4 vec, float3 angle)
 			{
- 				float angleX = angle.y;
-				float angleY = angle.x;
-				float angleZ = angle.z;
+ 				float angleX = radians(_rX2);
+				float angleY = radians(_rY2);
+				float angleZ = radians(_rZ2);
 
 				float c = cos(angleX);
 				float s = sin(angleX);
@@ -84,7 +97,24 @@
 
 			fixed4 frag (v2f i) : SV_Target
 			{
-				fixed4 depth = tex2D(_DepthTex, i.uv);
+				_rX2 = cos(_Time.y * _Speed) * _Animate + _rY;
+			 	_rY2 = sin(_Time.y * _Speed) * _Animate + _rX;
+			 	_rZ2 = _rZ;
+
+				fixed4 depth = tex2D(_DepthTex, i.uv2);
+				float4 pos2;
+				pos2.x = i.uv2.x;
+				pos2.y = i.uv2.y;
+				pos2.z = depth.r;
+				pos2.w = 1;
+
+				pos2.xyz -= 0.5;
+				pos2 = rotate(pos2, i.viewDir);
+				pos2.xyz += 0.5;
+
+			    depth = tex2D(_DepthTex, pos2.xy);
+
+
 				float4 pos;
 				pos.x = i.uv.x;
 				pos.y = i.uv.y;
