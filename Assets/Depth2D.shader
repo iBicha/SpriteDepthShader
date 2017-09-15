@@ -32,7 +32,8 @@
 			{
 				float4 vertex : POSITION;
 				float2 uv : TEXCOORD0;
-				float3 normal : NORMAL;
+				float2 uv2 : TEXCOORD1;
+				//float3 normal : NORMAL;
 			};
 
 			struct v2f
@@ -40,7 +41,7 @@
 				float2 uv : TEXCOORD0;
 				float2 uv2 : TEXCOORD1;
 				float4 vertex : SV_POSITION;
-				float3 viewDir : NORMAL;
+				//float3 viewDir : NORMAL; //Viewing angle.
 			};
 
 			sampler2D _MainTex;
@@ -57,12 +58,13 @@
 				v2f o;
 				o.vertex = UnityObjectToClipPos(v.vertex);
 				o.uv = TRANSFORM_TEX(v.uv, _MainTex);
-				o.uv2 = TRANSFORM_TEX(v.uv, _DepthTex);
-				o.viewDir = UNITY_MATRIX_IT_MV[2].xyz;
+				o.uv2 = TRANSFORM_TEX(v.uv2, _DepthTex);
+				//We will want to change angle by viewing vector. Maybe later.
+				//o.viewDir = UNITY_MATRIX_IT_MV[2].xyz;
 				return o;
 			}
 			
-			float4 rotate(float4 vec, float3 angle)
+			float4 rotate(float4 vec)
 			{
  				float angleX = radians(_rX2);
 				float angleY = radians(_rY2);
@@ -97,35 +99,33 @@
 
 			fixed4 frag (v2f i) : SV_Target
 			{
+				//Prepare some angles
 				_rX2 = cos(_Time.y * _Speed) * _Animate + _rY;
 			 	_rY2 = sin(_Time.y * _Speed) * _Animate + _rX;
 			 	_rZ2 = _rZ;
 
+			 	//Getting the depth value
 				fixed4 depth = tex2D(_DepthTex, i.uv2);
-				float4 pos2;
-				pos2.x = i.uv2.x;
-				pos2.y = i.uv2.y;
-				pos2.z = depth.r;
-				pos2.w = 1;
 
-				pos2.xyz -= 0.5;
-				pos2 = rotate(pos2, i.viewDir);
-				pos2.xyz += 0.5;
-
-			    depth = tex2D(_DepthTex, pos2.xy);
-
-
+				//rotating depth value, using depth value
 				float4 pos;
-				pos.x = i.uv.x;
-				pos.y = i.uv.y;
-				pos.z = depth.r;
+				pos.xy = i.uv2.xy;
+				pos.z = Luminance(depth.rgb);
 				pos.w = 1;
 
 				pos.xyz -= 0.5;
+				pos = rotate(pos);
+				pos.xyz += 0.5;
 
-				//rotate
-				pos = rotate(pos, i.viewDir);
-				
+			    depth = tex2D(_DepthTex, pos.xy);
+
+				//rotating rgb value, using rotated depth value
+				pos.xy = i.uv.xy;
+				pos.z = Luminance(depth.rgb);
+				pos.w = 1;
+
+				pos.xyz -= 0.5;
+				pos = rotate(pos);
 				pos.xyz += 0.5;
 
 				// sample the texture
