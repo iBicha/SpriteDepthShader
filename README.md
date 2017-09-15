@@ -4,6 +4,7 @@ Experimental shader to add depth to sprites. The idea is there, but still glitch
 
 ### If you have this
 <img src="https://raw.github.com/iBicha/SpriteDepthShader/master/Assets/sprite.png">
+
 ### And this
 <img src="https://raw.github.com/iBicha/SpriteDepthShader/master/Assets/depth.png">
 
