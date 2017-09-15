@@ -4,13 +4,12 @@
 	{
 		_MainTex("Texture", 2D) = "white" {}
 		_DepthTex("Depth", 2D) = "white" {}
-		_rX("RotateX", float) = 0
-		_rY("RotateY", float) = 0
-		_rZ("RotateZ", float) = 0
+		_rMain("Rotate Main", Vector) = (0,0,0,0)
+		_rDepth("Rotate Depth", Vector) = (0,0,0,0)
 		_Animate("Animate Angle", float) = 0
 		_Speed("Animate Speed", float) = 0
 		_zCenter("Depth Center", Range (0,1)) = 0.5
-}
+} 
 	SubShader
 	{
 	    //Tags {"Queue"="Transparent" "IgnoreProjector"="True" "RenderType"="Transparent"}
@@ -49,8 +48,7 @@
 			sampler2D _DepthTex;
 			float4 _MainTex_ST;
 			float4 _DepthTex_ST;
-			float _rX,_rY,_rZ;
-			float _rX2,_rY2,_rZ2;
+			float4 _rMain, _rDepth;
 			float _Animate, _Speed, _zCenter;
 
 			v2f vert (appdata v)
@@ -65,11 +63,16 @@
 				return o;
 			}
 			
-			float4 rotate(float4 vec)
+			float4 rotate(float4 vec, float3 angle)
 			{
- 				float angleX = radians(_rX2);
-				float angleY = radians(_rY2);
-				float angleZ = radians(_rZ2);
+
+
+				angle.x = cos(_Time.y * _Speed) * _Animate + angle.x;
+			 	angle.y = sin(_Time.y * _Speed) * _Animate + angle.y;
+
+ 				float angleX = radians(angle.x);
+				float angleY = radians(angle.y);
+				float angleZ = radians(angle.z);
 
 				float c = cos(angleX);
 				float s = sin(angleX);
@@ -100,11 +103,6 @@
 
 			fixed4 frag (v2f i) : SV_Target
 			{
-				//Prepare some angles
-				_rX2 = cos(_Time.y * _Speed) * _Animate + _rY;
-			 	_rY2 = sin(_Time.y * _Speed) * _Animate + _rX;
-			 	_rZ2 = _rZ;
-
 			 	//Getting the depth value
 				fixed4 depth = tex2D(_DepthTex, i.uv2);
 
@@ -115,7 +113,7 @@
 				pos.w = 1;
 
 				pos.xyz -= _zCenter;
-				pos = rotate(pos);
+				pos = rotate(pos, _rDepth);
 				pos.xyz += _zCenter;
 
 			    depth = tex2D(_DepthTex, pos.xy);
@@ -126,7 +124,7 @@
 				pos.w = 1;
 
 				pos.xyz -= _zCenter;
-				pos = rotate(pos);
+				pos = rotate(pos, _rMain);
 				pos.xyz += _zCenter;
 
 				// sample the texture
