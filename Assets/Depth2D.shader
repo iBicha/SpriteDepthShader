@@ -8,7 +8,7 @@
 		_rDepth("Rotate Depth", Vector) = (0,0,0,0)
 		_Animate("Animate Angle", float) = 0
 		_Speed("Animate Speed", float) = 0
-		_zCenter("Depth Center", Range (0,1)) = 0.5
+		_Center("Rotate Depth", Vector) = (0.5,0.5,0.5,0)
 } 
 	SubShader
 	{
@@ -48,8 +48,9 @@
 			sampler2D _DepthTex;
 			float4 _MainTex_ST;
 			float4 _DepthTex_ST;
-			float4 _rMain, _rDepth;
-			float _Animate, _Speed, _zCenter;
+
+			float4 _rMain, _rDepth, _Center;
+			float _Animate, _Speed;
 
 			v2f vert (appdata v)
 			{
@@ -63,7 +64,7 @@
 				return o;
 			}
 			
-			float4 rotate(float4 vec, float3 angle)
+			float4 rotate(float4 vec, float3 angle, float4 center)
 			{
 
 
@@ -95,9 +96,11 @@
 					0, 0, 1, 0,
 					0, 0, 0, 1);
 
+				vec -= center;
 				vec = mul(vec, rotateXMatrix);
 				vec = mul(vec, rotateYMatrix);
 				vec = mul(vec, rotateZMatrix);
+				vec += center;
 				return vec;
 			}
 
@@ -112,9 +115,7 @@
 				pos.z = Luminance(depth.rgb);
 				pos.w = 1;
 
-				pos.xyz -= _zCenter;
-				pos = rotate(pos, _rDepth);
-				pos.xyz += _zCenter;
+				pos = rotate(pos, _rDepth, _Center);
 
 			    depth = tex2D(_DepthTex, pos.xy);
 
@@ -123,9 +124,7 @@
 				pos.z = Luminance(depth.rgb);
 				pos.w = 1;
 
-				pos.xyz -= _zCenter;
-				pos = rotate(pos, _rMain);
-				pos.xyz += _zCenter;
+				pos = rotate(pos, _rMain, _Center);
 
 				// sample the texture
 				fixed4 col = tex2D(_MainTex, pos.xy) ;
