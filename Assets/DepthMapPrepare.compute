@@ -1,0 +1,18 @@
+﻿#include "Depth2D.cginc"
+
+#pragma kernel PrepareDepthMapMain
+
+Texture2D depthMap;
+RWTexture2D<float4> depthMapOut;
+
+float4 _RotationAngle, _RotationCenter, _FillColor;
+
+[numthreads(8,8,1)]
+void PrepareDepthMapMain (uint3 id : SV_DispatchThreadID)
+{
+	// TODO:
+	//1-Clear with fill color
+	//2-Rotate pixel from depth map with -_RotationAngle around _RotationCenter
+	//3-store in depthMapOut after a depth test
+}
+ 

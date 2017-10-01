@@ -119,6 +119,7 @@ GameObject:
   - component: {fileID: 322057146}
   - component: {fileID: 322057145}
   - component: {fileID: 322057144}
+  - component: {fileID: 322057148}
   m_Layer: 0
   m_Name: Quad
   m_TagString: Untagged
@@ -192,6 +193,21 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &322057148
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 322057143}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3afe44b6726fd471c9e620ff34d52c51, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  depthMapperComputeShader: {fileID: 7200000, guid: db087b2fb705845199d5a037b36d35c3,
+    type: 3}
+  depthMaterial: {fileID: 2100000, guid: 9fb920c5c4cab374d89205269c1c1fc2, type: 2}
+  depthMapOut: {fileID: 1866658741}
 --- !u!1 &612615118
 GameObject:
   m_ObjectHideFlags: 0
@@ -305,7 +321,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 2100000, guid: 337c015cce914c047838a13e64d81e50, type: 2}
+  - {fileID: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -407,7 +423,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 0.25010145, g: 0.2647059, b: 0, a: 1}
+  m_BackGroundColor: {r: 0, g: 0.2647059, b: 0.012778928, a: 1}
   m_NormalizedViewPortRect:
     serializedVersion: 2
     x: 0
@@ -441,7 +457,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1177248985}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -10}
+  m_LocalPosition: {x: 0, y: 0, z: -5.07}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -538,3 +554,30 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 15.040001, y: -45.071003, z: 6.5530005}
+--- !u!84 &1866658741
+RenderTexture:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_Name: 
+  m_ImageContentsHash:
+    serializedVersion: 2
+    Hash: 00000000000000000000000000000000
+  m_Width: 512
+  m_Height: 512
+  m_AntiAliasing: 1
+  m_DepthFormat: 0
+  m_ColorFormat: 0
+  m_MipMap: 0
+  m_GenerateMips: 1
+  m_SRGB: 0
+  m_TextureSettings:
+    serializedVersion: 2
+    m_FilterMode: 1
+    m_Aniso: 1
+    m_MipBias: 0
+    m_WrapU: 1
+    m_WrapV: 1
+    m_WrapW: 1
+  m_Dimension: 2
+  m_VolumeDepth: 1
