@@ -21,9 +21,6 @@
 
 float4 rotate(float4 vec, float3 angle, float4 center)
 {
-
-	float a = cos(0);
-
 	float angleX = radians(angle.x);
 	float angleY = radians(angle.y);
 	float angleZ = radians(angle.z);
@@ -57,13 +54,10 @@ float4 rotate(float4 vec, float3 angle, float4 center)
 	return vec;
 }
 
-#if ANGLE_ANIMATE
 float4 animateAngle(float4 angle, float speed, float animateAngle) {
 	angle.x = cos(_Time.y * speed) * animateAngle + angle.x;
 	angle.y = sin(_Time.y * speed) * animateAngle + angle.y;
 	return angle;
 }
-#endif
-
 
 #endif

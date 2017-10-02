@@ -6,9 +6,9 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: sprite
+  m_Name: Depth2DMaterial
   m_Shader: {fileID: 4800000, guid: ce7f23d092d9d2445ac66ce0e56c7d99, type: 3}
-  m_ShaderKeywords: ANGLE_ANIMATE
+  m_ShaderKeywords: 
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -23,7 +23,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DepthTex2:
-        m_Texture: {fileID: 8400000, guid: 13a18ad260ceb45ff94e95e09fddad4a, type: 2}
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
@@ -35,12 +35,15 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
-    - _Animate: 10
+    - _Animate: 15
     - _FillWithRed: 0
     - _Speed: 2
-    - _ToggleAnimation: 1
+    - _ToggleAnimation: 0
     m_Colors:
     - _Center: {r: 0.5, g: 0.5, b: 0.3, a: 0}
     - _Color: {r: 1, g: 0, b: 1, a: 1}
+    - _FillColor: {r: 1, g: 0, b: 1, a: 1}
+    - _RotationAngle: {r: 0, g: 0, b: 0, a: 0}
+    - _RotationCenter: {r: 0.5, g: 0.5, b: 0.5, a: 0}
     - _rDepth: {r: 0, g: 0, b: 0, a: 0}
-    - _rMain: {r: 0, g: 0, b: 0, a: 0}
+    - _rMain: {r: -8.01, g: 0, b: 0, a: 0}

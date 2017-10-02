@@ -1,18 +1,45 @@
-﻿#include "Depth2D.cginc"
+﻿#include "UnityCG.cginc"
+#include "Depth2D.cginc"
 
 #pragma kernel PrepareDepthMapMain
 
 Texture2D depthMap;
+SamplerState samplerdepthMap;
+float width,height, _Speed, _Animate, _ToggleAnimation;
+
 RWTexture2D<float4> depthMapOut;
 
 float4 _RotationAngle, _RotationCenter, _FillColor;
 
-[numthreads(8,8,1)]
+[numthreads(1,1,1)]
 void PrepareDepthMapMain (uint3 id : SV_DispatchThreadID)
 {
-	// TODO:
-	//1-Clear with fill color
-	//2-Rotate pixel from depth map with -_RotationAngle around _RotationCenter
-	//3-store in depthMapOut after a depth test
+	int x, y;
+	for(x = 0; x < width; x++) {
+		for(y = 0; y < width; y++) {
+			depthMapOut[uint2(x,y)] = _FillColor;
+		}
+	}
+
+	if(_ToggleAnimation > 0) {
+		_RotationAngle = animateAngle(_RotationAngle, _Speed, _Animate);
+	}
+
+	for(x = 0; x < width; x++) {
+		float u = x/width;
+		for(y = 0; y < width; y++) {
+			float2 uv = float2(u, y/height);
+			float4 depth = depthMap.SampleLevel( samplerdepthMap, uv, 0 );
+
+			float4 pos = float4(uv.x, uv.y, Luminance(depth.rgb), 1);
+
+			pos = rotate(pos, -_RotationAngle.xyz, _RotationCenter);
+
+			if(pos.x >= 0 && pos.y >= 0 && pos.x <= 1 && pos.y <= 1) {
+				depth = depthMap.SampleLevel( samplerdepthMap, pos.xy, 0 );
+				depthMapOut[uint2(pos.x * x,pos.y * y)] = depth;
+
+			} 
+		}
+	}
 }
- 
